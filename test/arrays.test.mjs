@@ -3,7 +3,7 @@ import { Tests, Test } from "unit-tester";
 
 import { reactive, atom } from "../src/hooks.mjs";
 
-import { filter, map, prepend, append, insert, assignWhere, sort, asc,  desc } from "../src/arrays.mjs";
+import { filter, map, prepend, append, insert, assignWhere, sort, asc, desc } from "../src/arrays.mjs";
 import { is } from "../src/booleans.mjs";
 import { power } from "../src/numbers.mjs";
 
@@ -49,6 +49,7 @@ export default [
 
       assert.deepEqual(state(), [1, 2, 3, 4, 5, 6]);
       await setState(assignWhere(is(3), power(2)));
+      // await setState(assignWhere(e => e === e, e => e * e));
       assert.deepEqual(state(), [1, 2, 9, 4, 5, 6]);
     }),
     Test("#sort(asc)", async () => {

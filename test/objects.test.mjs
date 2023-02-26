@@ -6,7 +6,7 @@ import { reactive, atom } from "../src/hooks.mjs";
 import { assign } from "../src/objects.mjs";
 
 export default [
-  Tests("Object Utils", 
+  Tests("Object Utils",
     Test("#assign", async () => {
       const [person,, setPerson] = atom({ name: "tim" });
 
