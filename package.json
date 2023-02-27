@@ -1,8 +1,8 @@
 {
   "name": "atomi",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "JS Reactivity Framework",
-  "main": "index.js",
+  "main": "index.mjs",
   "scripts": {
     "test": "node_modules/unit-tester/test.mjs test"
   },
