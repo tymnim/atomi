@@ -1,6 +1,6 @@
 {
   "name": "atomi",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "JS Reactivity Framework",
   "main": "index.mjs",
   "scripts": {

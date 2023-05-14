@@ -57,7 +57,7 @@ reactive(scope => {
 
 ### `atom`
 
-- [src/hooks.mjs#53](https://github.com/tymnim/atomi/blob/master/src/hooks.mjs#L53)
+- [src/hooks.mjs#53](https://github.com/tymnim/atomi/blob/master/src/hooks.mjs#L82)
 - Accept `Any`
 - Return `[() => Any, (value) => Promise, (Function) => Promise]`
 
@@ -103,7 +103,7 @@ await setCountFn((current, NONE) => NONE) // Count stays at 3 and logCount is no
 
 ### `new atom`
 
-- [src/hooks.mjs#53](https://github.com/tymnim/atomi/blob/master/src/hooks.mjs#L53)
+- [src/hooks.mjs#53](https://github.com/tymnim/atomi/blob/master/src/hooks.mjs#L82)
 - Accept `Any`
 - Return [RectiveVar](#ReactiveVar)
 
@@ -127,7 +127,7 @@ await count.set(1) // sets atom count value to 1 and triggers logCount
 
 ### `nonreactive`
 
-- [src/hooks.mjs#45](https://github.com/tymnim/atomi/blob/master/src/hooks.mjs#L45)
+- [src/hooks.mjs#45](https://github.com/tymnim/atomi/blob/master/src/hooks.mjs#L46)
 - Accept `Function`
 - Return `Any`
 
@@ -153,6 +153,49 @@ reactive(() => {
 await setCount(current => 1) // triggers the reactive function and logs `count is 2`
 await setIncrement(2) // does not trigger the reactive function
 await setCount(current => 2) // triggers the reactive function and logs `count is 4`
+```
+
+### `guard`
+
+- [src/hooks.mjs#45](https://github.com/tymnim/atomi/blob/master/src/hooks.mjs#L57)
+- Accept `Function`, `Function`
+- Return `Any`
+
+```js
+import { guard } from "atomi"
+```
+
+> Used as wrapper around an atom or a function to access its value, but triggers value changes. Acceps a comparison function as a second argument.
+
+| Argument | Type | Desc |
+|---|:---|:---|
+| Callback | `Function` | Getter function or atomic function |
+| Comparator | `Function` | Comparator function; accepts 2 arguments, new and old return value of the callback function. Will trigger the dependencies and store the new value when Comparator returns `true` |
+
+Returns the return value of the callback function
+
+```js
+const [number, setNumber] = atom(0)
+reactive(() => {
+  console.log(`number is ${guard(number)}`)
+})
+
+await setNumber(1) // triggers the reactive function and logs `count is 1`
+await setNumber(1) // does not trigger the reactive function
+await setNumber(2) // triggers the reactive function and logs `count is 2`
+```
+
+Example using custom comparator function:
+
+```js
+const [number, setNumber] = atom(0)
+reactive(() => {
+  console.log(`number is ${guard(number, (a, b) => parseInt(a) !== parseInt(b))}`)
+})
+
+await setNumber(0.5) // does not trigger the reactive function, because parseInt(0.5) is still 0
+await setNumber(1.1) // triggers the reactive function and logs `count is 1.1`
+await setNumber(1.5) // does not trigger the reactive function, because parseInt(1.5) is still 1
 ```
 
 ## Core
