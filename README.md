@@ -57,7 +57,7 @@ reactive(scope => {
 
 ### `atom`
 
-- [src/hooks.mjs#53](https://github.com/tymnim/atomi/blob/master/src/hooks.mjs#L82)
+- [src/hooks.mjs#82](https://github.com/tymnim/atomi/blob/master/src/hooks.mjs#L82)
 - Accept `Any`
 - Return `[() => Any, (value) => Promise, (Function) => Promise]`
 
@@ -103,7 +103,7 @@ await setCountFn((current, NONE) => NONE) // Count stays at 3 and logCount is no
 
 ### `new atom`
 
-- [src/hooks.mjs#53](https://github.com/tymnim/atomi/blob/master/src/hooks.mjs#L82)
+- [src/hooks.mjs#82](https://github.com/tymnim/atomi/blob/master/src/hooks.mjs#L82)
 - Accept `Any`
 - Return [RectiveVar](#ReactiveVar)
 
@@ -127,7 +127,7 @@ await count.set(1) // sets atom count value to 1 and triggers logCount
 
 ### `nonreactive`
 
-- [src/hooks.mjs#45](https://github.com/tymnim/atomi/blob/master/src/hooks.mjs#L46)
+- [src/hooks.mjs#46](https://github.com/tymnim/atomi/blob/master/src/hooks.mjs#L46)
 - Accept `Function`
 - Return `Any`
 
@@ -157,7 +157,7 @@ await setCount(current => 2) // triggers the reactive function and logs `count i
 
 ### `guard`
 
-- [src/hooks.mjs#45](https://github.com/tymnim/atomi/blob/master/src/hooks.mjs#L57)
+- [src/hooks.mjs#57](https://github.com/tymnim/atomi/blob/master/src/hooks.mjs#L57)
 - Accept `Function`, `Function`
 - Return `Any`
 
@@ -204,7 +204,7 @@ This part describes the core functionality that the framework is built upon. Maj
 
 ### ReactiveVar
 
-- [src/core.mjs#L110](https://github.com/tymnim/atomi/blob/master/src/core.mjs#L110)
+- [src/core.mjs#120](https://github.com/tymnim/atomi/blob/master/src/core.mjs#L120)
 - Accept `Any`
 - Return instance of [RectiveVar](#ReactiveVar)
 
@@ -218,7 +218,7 @@ import { ReactiveVar } from "atomi"
 
 #### #get
 
-- [src/core.mjs#L116](https://github.com/tymnim/atomi/blob/master/src/core.mjs#L116)
+- [src/core.mjs#L126](https://github.com/tymnim/atomi/blob/master/src/core.mjs#L126)
 
 > Returns current value of the ReactiveVar and registers current scope as a dependency is current scope exists
 
@@ -232,7 +232,7 @@ reactive(() => {
 
 #### #set
 
-- [src/core.mjs#L123](https://github.com/tymnim/atomi/blob/master/src/core.mjs#L123)
+- [src/core.mjs#133](https://github.com/tymnim/atomi/blob/master/src/core.mjs#L133)
 
 > Sets value of the ReactiveVar
 
@@ -243,7 +243,7 @@ counter.set(2) // counter.get will return 2 instead
 
 ### Scope
 
-- [src/core.mjs#L41](https://github.com/tymnim/atomi/blob/master/src/core.mjs#L41)
+- [src/core.mjs#45](https://github.com/tymnim/atomi/blob/master/src/core.mjs#L45)
 - Accept `Function`
 - Return instance of [Scope](#Scope)
 
@@ -268,28 +268,28 @@ scope.die()
 ```
 #### #depend
 
-- [src/core.mjs#L59](https://github.com/tymnim/atomi/blob/master/src/core.mjs#L59)
+- [src/core.mjs#63](https://github.com/tymnim/atomi/blob/master/src/core.mjs#L63)
 - Return `void`
 
 > Is used by [ReactiveVar.get](#get) to register a dependency
 
 #### die
 
-- [src/core.mjs#L91](https://github.com/tymnim/atomi/blob/master/src/core.mjs#L91)
+- [src/core.mjs#98](https://github.com/tymnim/atomi/blob/master/src/core.mjs#L98)
 - Return `void`
 
 > Intended to be used like [#stop](#stop) but permanently
 
 #### #execute
 
-- [src/core.mjs#L74](https://github.com/tymnim/atomi/blob/master/src/core.mjs#L74)
+- [src/core.mjs#78](https://github.com/tymnim/atomi/blob/master/src/core.mjs#L78)
 - Return `void`
 
 > Is used by [Tracker](#Tracker) when to execute reactive function when [Scope](#Scope) was triggered by any [ReactiveVars](#ReactiveVar) previously
 
 #### #firstRun
 
-- [src/core.mjs#L41](https://github.com/tymnim/atomi/blob/master/src/core.mjs#L41)
+- [src/core.mjs#59](https://github.com/tymnim/atomi/blob/master/src/core.mjs#L59)
 - Return `Boolean`
 
 > A getter property of Scope. Returns true if the dependant function has not been called more then once.
@@ -302,7 +302,7 @@ reactive(scope => {
 
 #### #resume
 
-- [src/core.mjs#L69](https://github.com/tymnim/atomi/blob/master/src/core.mjs#L69)
+- [src/core.mjs#73](https://github.com/tymnim/atomi/blob/master/src/core.mjs#L73)
 - Return `void`
 
 > Is used to restore connection between dependant [ReactiveVars](#ReactiveVars) and the [Scope](#Scope). Should be called to restore reactive function execution after [Scope.stop](#stop) had been called.
@@ -321,7 +321,7 @@ await setCount(3) // logs `count is 3`
 
 #### #stop
 
-- [src/core.mjs#L64](https://github.com/tymnim/atomi/blob/master/src/core.mjs#L64)
+- [src/core.mjs#68](https://github.com/tymnim/atomi/blob/master/src/core.mjs#L68)
 - Return `void`
 
 > Is used when we want to temporary suspend reactive function execution event when its dependencies are updated.
@@ -340,7 +340,7 @@ await setCount(3) // logs `count is 3`
 
 #### #trigger
 
-- [src/core.mjs#L101](https://github.com/tymnim/atomi/blob/master/src/core.mjs#L101)
+- [src/core.mjs#109](https://github.com/tymnim/atomi/blob/master/src/core.mjs#L109)
 - Return `Promise`
 
 > Is used by [ReactiveVar](#ReactiveVar) when setting a new value.
@@ -349,14 +349,14 @@ Returns `Promise` that fullfils when reactive function of the scope is finished 
 
 #### #triggeredBy
 
-- [src/core.mjs#L48](https://github.com/tymnim/atomi/blob/master/src/core.mjs#L48)
+- [src/core.mjs#52](https://github.com/tymnim/atomi/blob/master/src/core.mjs#L52)
 - Type `Set`
 
 > Is a property of the scope. Is usefull when debugging to know what [ReactiveVar](#ReactiveVar) triggered the scope update when scope depends on multiple ReactiveVars
 
 ### Tracker
 
-- [src/core.mjs#L2](https://github.com/tymnim/atomi/blob/master/src/core.mjs#L2)
+- [src/core.mjs#2](https://github.com/tymnim/atomi/blob/master/src/core.mjs#L2)
 - Type `Object`
 
 > Intended to be used as a global object to track and register ReactiveVar updates and execute reactive functions
@@ -367,7 +367,7 @@ import { Tracker } from "atomi"
 
 #### scheduleJob
 
-- [src/core.mjs#L5](https://github.com/tymnim/atomi/blob/master/src/core.mjs#L5)
+- [src/core.mjs#5](https://github.com/tymnim/atomi/blob/master/src/core.mjs#L5)
 - Accept [scope](#Scope)
 - Return `Promise`
 
@@ -381,7 +381,7 @@ This sections will focus exclusively on the functions to enhance experience with
 
 #### add
 
-- [src/numbers.mjs#L2](https://github.com/tymnim/atomi/blob/master/src/numbers.mjs#L2)
+- [src/numbers.mjs#2](https://github.com/tymnim/atomi/blob/master/src/numbers.mjs#L2)
 - Accept `Number`
 - Return `(Number) => Number`
 
@@ -400,7 +400,7 @@ setCount(add(5)) // sets 7 as count value
 
 #### sub
 
-- [src/numbers.mjs#L6](https://github.com/tymnim/atomi/blob/master/src/numbers.mjs#L6)
+- [src/numbers.mjs#6](https://github.com/tymnim/atomi/blob/master/src/numbers.mjs#L6)
 - Accept `Number`
 - Return `(Number) => Number`
 
@@ -419,7 +419,7 @@ setCount(sub(5)) // sets 3 as count value
 
 #### inc
 
-- [src/numbers.mjs#L10](https://github.com/tymnim/atomi/blob/master/src/numbers.mjs#L10)
+- [src/numbers.mjs#10](https://github.com/tymnim/atomi/blob/master/src/numbers.mjs#L10)
 - Accept `(Number) => Number`
 - Return `Number`
 
@@ -438,7 +438,7 @@ setCount(inc) // sets 2 as count value
 
 #### dec
 
-- [src/numbers.mjs#L11](https://github.com/tymnim/atomi/blob/master/src/numbers.mjs#L11)
+- [src/numbers.mjs#11](https://github.com/tymnim/atomi/blob/master/src/numbers.mjs#L11)
 - Accept `(Number) => Number`
 - Return `Number`
 
@@ -457,7 +457,7 @@ setCount(sub) // sets 8 as count value
 
 #### power
 
-- [src/numbers.mjs#L13](https://github.com/tymnim/atomi/blob/master/src/numbers.mjs#L13)
+- [src/numbers.mjs#13](https://github.com/tymnim/atomi/blob/master/src/numbers.mjs#L13)
 - Accept `Number`
 - Return `(Number) => Number`
 
@@ -479,7 +479,7 @@ setCount(pow(3)) // sets 64 as count value
 #### assign
 
 
-- [src/objects.mjs#L2](https://github.com/tymnim/atomi/blob/master/src/objects.mjs#L2)
+- [src/objects.mjs#2](https://github.com/tymnim/atomi/blob/master/src/objects.mjs#L2)
 - Accept `Object`
 - Return `(Object) => Object`
 
@@ -500,7 +500,7 @@ setPerson(assing({ age: 23 })) // sets person to be { name: "tim", age: 23 }
 
 #### not
 
-- [src/booleans.mjs#L2](https://github.com/tymnim/atomi/blob/master/src/booleans.mjs#L2)
+- [src/booleans.mjs#2](https://github.com/tymnim/atomi/blob/master/src/booleans.mjs#L2)
 - Accept `Any`
 - Return `Boolean`
 
@@ -519,7 +519,7 @@ setState(not) // sets state to true
 
 #### id
 
-- [src/booleans.mjs#L6](https://github.com/tymnim/atomi/blob/master/src/booleans.mjs#L6)
+- [src/booleans.mjs#6](https://github.com/tymnim/atomi/blob/master/src/booleans.mjs#L6)
 - Accept `Any`
 - Return `Any`
 
@@ -537,7 +537,7 @@ setArray(filter(id)) // filters out all falsy values leaving [1, 2]
 
 #### is
 
-- [src/booleans.mjs#L10](https://github.com/tymnim/atomi/blob/master/src/booleans.mjs#L10)
+- [src/booleans.mjs#10](https://github.com/tymnim/atomi/blob/master/src/booleans.mjs#L10)
 - Accept `Any`
 - Return `(Any) => Boolean`
 
@@ -555,7 +555,7 @@ setArray(filter(is(1))) // filters out all values that are not 1 leaving [1, 1]
 
 #### lesser
 
-- [src/booleans.mjs#L14](https://github.com/tymnim/atomi/blob/master/src/booleans.mjs#L14)
+- [src/booleans.mjs#14](https://github.com/tymnim/atomi/blob/master/src/booleans.mjs#L14)
 - Accept `Number`
 - Return `(Number) => Boolean`
 
@@ -573,7 +573,7 @@ setArray(filter(lesser(2))) // filters all values that less then 2 [1,0,1,0]
 
 #### greater
 
-- [src/booleans.mjs#L18](https://github.com/tymnim/atomi/blob/master/src/booleans.mjs#L18)
+- [src/booleans.mjs#18](https://github.com/tymnim/atomi/blob/master/src/booleans.mjs#L18)
 - Accept `Number`
 - Return `(Number) => Boolean`
 
@@ -591,7 +591,7 @@ setArray(filter(greater(1))) // filters all values that are greater then 1 leavi
 
 #### negative
 
-- [src/booleans.mjs#L22](https://github.com/tymnim/atomi/blob/master/src/booleans.mjs#L22)
+- [src/booleans.mjs#22](https://github.com/tymnim/atomi/blob/master/src/booleans.mjs#L22)
 - Accept `Number`
 - Return `Boolean`
 
@@ -609,7 +609,7 @@ setArray(filter(negative)) // filters out all values that are not negative leavi
 
 #### positive
 
-- [src/booleans.mjs#L23](https://github.com/tymnim/atomi/blob/master/src/booleans.mjs#L23)
+- [src/booleans.mjs#23](https://github.com/tymnim/atomi/blob/master/src/booleans.mjs#L23)
 - Accept `Number`
 - Return `Boolean`
 
@@ -629,7 +629,7 @@ setArray(filter(positive)) // filters out all values that are not negative leavi
 
 #### map
 
-- [src/arrays.mjs#L2](https://github.com/tymnim/atomi/blob/master/src/arrays.mjs#L2)
+- [src/arrays.mjs#2](https://github.com/tymnim/atomi/blob/master/src/arrays.mjs#L2)
 - Accept `(Any) => Any`
 - Return `(Any) => Any`
 
@@ -648,7 +648,7 @@ setArray(map(inc)) // increases all array elements by 1 using inc
 
 #### filter
 
-- [src/arrays.mjs#L6](https://github.com/tymnim/atomi/blob/master/src/arrays.mjs#L6)
+- [src/arrays.mjs#6](https://github.com/tymnim/atomi/blob/master/src/arrays.mjs#L6)
 - Accept `(Any) => Any`
 - Return `(Any) => Any`
 
@@ -666,7 +666,7 @@ setArray(filter(x => x > 1)) // keeps only elemens that are larger then 1
 
 #### prepend
 
-- [src/arrays.mjs#L10](https://github.com/tymnim/atomi/blob/master/src/arrays.mjs#L10)
+- [src/arrays.mjs#10](https://github.com/tymnim/atomi/blob/master/src/arrays.mjs#L10)
 - Accept `Any`
 - Return `(Array) => Array`
 
@@ -684,7 +684,7 @@ setArray(prepend(0, 0.5)) // adds 0 and 0.5 at the beginning. Not array is [0,0.
 
 #### append
 
-- [src/arrays.mjs#L14](https://github.com/tymnim/atomi/blob/master/src/arrays.mjs#L14)
+- [src/arrays.mjs#14](https://github.com/tymnim/atomi/blob/master/src/arrays.mjs#L14)
 - Accept ...`Any`
 - Return `(Array) => Array`
 
@@ -702,7 +702,7 @@ setArray(append(0)) // add 0 at the end. Not array is [1,3,2,0]
 
 #### insert
 
-- [src/arrays.mjs#L18](https://github.com/tymnim/atomi/blob/master/src/arrays.mjs#L18)
+- [src/arrays.mjs#18](https://github.com/tymnim/atomi/blob/master/src/arrays.mjs#L18)
 - Accept `Number`, ...`Any`
 - Return `(Array) => Array`
 
@@ -720,7 +720,7 @@ setArray(insert(1, 4, 5)) // inserted [4, 5] at position 1. Now array stores [1,
 
 #### assignWhere
 
-- [src/arrays.mjs#L26](https://github.com/tymnim/atomi/blob/master/src/arrays.mjs#L26)
+- [src/arrays.mjs#26](https://github.com/tymnim/atomi/blob/master/src/arrays.mjs#L26)
 - Accept `(Any) => Boolean`, `Any => Any`
 - Return `(Array, NONE) => Array`
 
@@ -738,7 +738,7 @@ setArray(assignWhere(is(3)), inc) // where element is equal to 3 it will increas
 
 #### sort
 
-- [src/arrays.mjs#L37](https://github.com/tymnim/atomi/blob/master/src/arrays.mjs#L37)
+- [src/arrays.mjs#37](https://github.com/tymnim/atomi/blob/master/src/arrays.mjs#L37)
 - Accept `(Any, Any) => Boolean`
 - Return `(Array) => Array`
 
@@ -756,7 +756,7 @@ setArray(sort()) // using default js sorter. Now array stores [1, 11, 2, 3]
 
 #### asc
 
-- [src/arrays.mjs#L44](https://github.com/tymnim/atomi/blob/master/src/arrays.mjs#L44)
+- [src/arrays.mjs#44](https://github.com/tymnim/atomi/blob/master/src/arrays.mjs#L44)
 - Accept `Any`, `Any`
 - Return `Boolean`
 
@@ -774,7 +774,7 @@ setArray(sort(asc)) // using default js sorter. Now array stores [1, 2, 3, 11]
 
 #### desc
 
-- [src/arrays.mjs#L48](https://github.com/tymnim/atomi/blob/master/src/arrays.mjs#L48)
+- [src/arrays.mjs#48](https://github.com/tymnim/atomi/blob/master/src/arrays.mjs#L48)
 - Accept `(Any, Any) => Boolean`
 - Return `(Array) => Array`
 
