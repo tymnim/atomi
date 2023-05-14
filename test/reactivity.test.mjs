@@ -2,7 +2,7 @@
 import assert from "assert";
 import { Tests, Test } from "unit-tester";
 import { ReactiveVar, Scope } from "../src/core.mjs";
-import { reactive, atom } from "../src/hooks.mjs";
+import { reactive, nonreactive, atom, guard } from "../src/hooks.mjs";
 
 const wait = time => new Promise(resolve => setTimeout(resolve, time));
 
@@ -141,6 +141,107 @@ const hooksTests = Tests("Hooks",
       setState2(true);
       await setState1(true);
       assert.equal(timesExecuted, 3);
+    })
+  ),
+  Test("#nonreactive", async () => {
+    const [state, setState] = atom(false);
+    const [trigger, setTrigger] = atom(0);
+    let timesExecuted = 0;
+    reactive(() => {
+      nonreactive(state);
+      trigger();
+      timesExecuted++;
+    });
+
+    assert.equal(timesExecuted, 1, `#1 Should've executed 1, but did ${timesExecuted}`);
+    await setState(false);
+    assert.equal(timesExecuted, 1, `#2 Should've executed 1, but did ${timesExecuted}`);
+    await setState(true);
+    await setTrigger(1);
+    assert.equal(timesExecuted, 2, `#3 Should've executed 2, but did ${timesExecuted}`);
+  }),
+  Tests("#guard",
+    Test("#guard single", async () => {
+      const [state, setState] = atom(false);
+      let timesExecuted = 0;
+      const scope = reactive((scope) => {
+        const val = guard(state);
+        timesExecuted += 1;
+      });
+      assert.equal(timesExecuted, 1, `#1 Should've executed 1, but did ${timesExecuted}`);
+      await setState(false);
+      assert.equal(timesExecuted, 1, `#2 Should've executed 1, but did ${timesExecuted}`);
+      await setState(true);
+      assert.equal(timesExecuted, 2, `#3 Should've executed 2, but did ${timesExecuted}`);
+      await setState(true);
+      assert.equal(timesExecuted, 2, `#4 Should've executed 2, but did ${timesExecuted}`);
+      await setState(false);
+      assert.equal(timesExecuted, 3, `#5 Should've executed 3, but did ${timesExecuted}`);
+    }),
+    Test("#guard with custom equal function", async () => {
+      const [state, setState] = atom(0);
+      let timesExecuted = 0;
+      const scope = reactive(async (scope) => {
+        const val = guard(state, (a, b) => parseInt(a) !== parseInt(b));
+        timesExecuted += 1;
+      });
+      assert.equal(timesExecuted, 1, `#1 Should've executed 1, but did ${timesExecuted}`);
+      await setState(0.5);
+      assert.equal(timesExecuted, 1, `#2 Should've executed 1, but did ${timesExecuted}`);
+      await setState(1);
+      assert.equal(timesExecuted, 2, `#3 Should've executed 2, but did ${timesExecuted}`);
+      await setState(1.5);
+      assert.equal(timesExecuted, 2, `#4 Should've executed 2, but did ${timesExecuted}`);
+      await setState(2);
+      assert.equal(timesExecuted, 3, `#5 Should've executed 3, but did ${timesExecuted}`);
+
+    }),
+    Test("#guard with multiple deps", async () => {
+      const [state, setState] = atom(0);
+      const [mul, setMul] = atom(1);
+      let timesExecuted = 0;
+      const scope = reactive(() => {
+        const val = guard(() => state() * mul());
+        assert.equal(val, nonreactive(() => state() * mul()));
+        timesExecuted += 1;
+      });
+      assert.equal(timesExecuted, 1, `Should've executed 1, but did ${timesExecuted}`);
+      await setState(1);
+      assert.equal(timesExecuted, 2, `Should've executed 2, but did ${timesExecuted}`);
+      await setMul(1);
+      assert.equal(timesExecuted, 2, `Should've executed 2, but did ${timesExecuted}`);
+      await Promise.all([setState(2), setMul(2)]);
+      assert.equal(timesExecuted, 3, `Should've executed 3, but did ${timesExecuted}`);
+      await Promise.all([setState(-1), setMul(-4)]);
+      assert.equal(timesExecuted, 3, `Should've executed 3, but did ${timesExecuted}`);
+      await Promise.all([setState(1), setMul(-4)]);
+      assert.equal(timesExecuted, 4, `Should've executed 4, but did ${timesExecuted}`);
+    }),
+    Test("multiple #guard in one scope", async () => {
+      const [state, setState] = atom(0);
+      const [mul, setMul] = atom(1);
+
+      let timesExecuted = 0;
+      const scope = reactive((scope) => {
+        scope.space.name = "-- the double guard --";
+        const st = guard(state);
+        const ml = guard(mul);
+        assert.equal(st, nonreactive(state));
+        assert.equal(ml, nonreactive(mul));
+        timesExecuted += 1;
+      });
+      assert.equal(timesExecuted, 1, `Should've executed 1, but did ${timesExecuted}`);
+      await setState(1);
+      assert.equal(timesExecuted, 2, `Should've executed 2, but did ${timesExecuted}`);
+      await setMul(1);
+      assert.equal(timesExecuted, 2, `Should've executed 2, but did ${timesExecuted}`);
+      await setMul(2);
+      assert.equal(timesExecuted, 3, `Should've executed 3, but did ${timesExecuted}`);
+      await Promise.all([setMul(4), setState(4)]);
+      assert.equal(timesExecuted, 4, `Should've executed 4, but did ${timesExecuted}`);
+      await Promise.all([setMul(4), setState(4)]);
+      assert.equal(timesExecuted, 4, `Should've executed 4, but did ${timesExecuted}`);
+
     })
   )
 );

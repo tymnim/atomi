@@ -16,8 +16,12 @@ export const Tracker = {
       resolveJob = resolve;
     });
     job.execute = async () => {
-      await scope.execute();
-      resolveJob();
+      try {
+        await scope.execute();
+      }
+      finally {
+        resolveJob();
+      };
     }
 
     Tracker.scheduledJobs.set(scope, job);
@@ -32,8 +36,8 @@ export const Tracker = {
     //       if something changes in the future; this is the place to modify it
     //       Promise.all(scheduledJobs.map(job => job()))
     [...jobs.entries()].forEach(async ([scope, job]) => {
-      await job.execute();
       jobs.delete(scope);
+      await job.execute();
     });
   }
 };
@@ -76,8 +80,11 @@ export class Scope {
       return;
     }
     this.timesRun ++;
-
+    const oldScope = Tracker.currentScope;
+    Tracker.currentScope = this;
+    Tracker.currentScope._currentGuard = 0;
     const ret = this.callback(this);
+    Tracker.currentScope = oldScope;
     if (ret instanceof Promise) {
       return new Promise(async resolve => {
         await ret;
@@ -90,6 +97,7 @@ export class Scope {
 
   die() {
     this.stoped = true;
+    this._guards.forEach(guard => guard.die());
     // TODO: implement
     //       remove
     //       should get rid of all of the dependencies and remove itself from all of the deps
@@ -105,6 +113,8 @@ export class Scope {
     this.triggeredBy.add(reactiveVar);
     return Tracker.scheduleJob(this);
   }
+  _guards = []
+  _currentGuard = 0
 }
 
 export class ReactiveVar {

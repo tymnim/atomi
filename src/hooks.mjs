@@ -4,11 +4,12 @@ import { Tracker, ReactiveVar, Scope } from "./core.mjs";
 const NONE = Symbol("none");
 
 export function reactive(func, ignoreAsync = false) {
+  const oldScope = Tracker.currentScope;
   const currentScope = new Scope(func);
   Tracker.currentScope = currentScope;
   // NOTE: initial run; registers dependencies
   const ret = currentScope.execute();
-  Tracker.currentScope = null;
+  Tracker.currentScope = oldScope;
   if (ret instanceof Promise && !ignoreAsync) {
     return new Promise(resolve => ret.then(() => resolve(currentScope)));
   }
@@ -48,6 +49,34 @@ export function nonreactive(func) {
   const result = func();
   Tracker.currentScope = scope;
   return result;
+}
+
+function guardCondition(a, b) {
+  return a !== b;
+}
+export function guard(func, condition = guardCondition) {
+  const currentScope = Tracker.currentScope;
+  const index = currentScope._currentGuard;
+  if (currentScope.firstRun) {
+    currentScope._guards[index] = new Scope((self) => {
+      self.space.name = `-- ${index}#guard --`;
+      self.space.atom = new atom(func());
+      // NOTE: overriding self
+      self.callback = async (self) => {
+        const value = func();
+        if (condition(value, self.space.atom.value)) {
+          return await self.space.atom.set(value);
+        }
+      }
+    });
+  }
+
+  const guardScope = currentScope._guards[index];
+  Tracker.currentScope = guardScope;
+  guardScope.execute();
+  Tracker.currentScope = currentScope;
+  currentScope._currentGuard++;
+  return guardScope.space.atom.get();
 }
 
 export function atom(variable) {
