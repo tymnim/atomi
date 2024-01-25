@@ -1,4 +1,3 @@
-
 import { Tracker, ReactiveVar, Scope } from "./core.mjs";
 
 const NONE = Symbol("none");
@@ -94,3 +93,4 @@ export function atom(variable) {
 // }
 
 export default reactive;
+
