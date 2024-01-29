@@ -121,6 +121,8 @@ export class ReactiveVar {
   constructor(value) {
     this.value = value;
     this.deps = new Set();
+    this.get = this.get.bind(this);
+    this.set = this.set.bind(this);
   }
 
   get() {
@@ -142,3 +144,4 @@ export default {
   Scope,
   ReactiveVar,
 };
+

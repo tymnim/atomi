@@ -1,4 +1,3 @@
-
 import { Tracker, ReactiveVar, Scope } from "./core.mjs";
 
 const NONE = Symbol("none");
@@ -19,9 +18,13 @@ export function reactive(func, ignoreAsync = false) {
 
 export function reactiveState(reactiveVar) {
   return [
-    function get() {
-      return reactiveVar.get();
-    },
+    Object.defineProperty(
+      function get() {
+        return reactiveVar.get();
+      },
+      "reactiveVar",
+      { writable: false, enumerable: false, value: reactiveVar }
+    ),
     function set(value) {
       return reactiveVar.set(value);
     },
@@ -94,3 +97,4 @@ export function atom(variable) {
 // }
 
 export default reactive;
+
