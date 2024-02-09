@@ -2,7 +2,7 @@
 export const Tracker = {
   scheduledJobs: new Map(),
   jobsTimeoutId: null,
-  scheduleJob: (scope) => {
+  scheduleJob: scope => {
     if (!Tracker.jobsTimeoutId) {
       Tracker.jobsTimeoutId = setTimeout(Tracker.executeScheduledJobs);
     }
@@ -21,8 +21,8 @@ export const Tracker = {
       }
       finally {
         resolveJob();
-      };
-    }
+      }
+    };
 
     Tracker.scheduledJobs.set(scope, job);
     return job;
@@ -43,6 +43,10 @@ export const Tracker = {
 };
 
 export class Scope {
+  _guards = [];
+
+  _currentGuard = 0;
+
   constructor(callback) {
     this.callback = callback;
 
@@ -79,7 +83,7 @@ export class Scope {
     if (this.stopped) {
       return;
     }
-    this.timesRun ++;
+    this.timesRun += 1;
     const oldScope = Tracker.currentScope;
     Tracker.currentScope = this;
     Tracker.currentScope._currentGuard = 0;
@@ -102,7 +106,7 @@ export class Scope {
     //       remove
     //       should get rid of all of the dependencies and remove itself from all of the deps
     //       Look at FinalizationRegistry (
-    //          https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/FinalizationRegistry
+    //           https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/FinalizationRegistry
     //       )
   }
 
@@ -113,8 +117,7 @@ export class Scope {
     this.triggeredBy.add(reactiveVar);
     return Tracker.scheduleJob(this);
   }
-  _guards = []
-  _currentGuard = 0
+
 }
 
 export class ReactiveVar {
@@ -131,6 +134,7 @@ export class ReactiveVar {
     }
     return this.value;
   }
+
   // NOTE: #set can be optionaly awaited for all dependencies to execute.
   set(value) {
     this.value = value;
@@ -142,6 +146,6 @@ export class ReactiveVar {
 export default {
   Tracker,
   Scope,
-  ReactiveVar,
+  ReactiveVar
 };
 
