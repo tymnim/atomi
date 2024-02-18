@@ -24,7 +24,7 @@ export const inc = add(1);
 
 /**
  * @param {number} number
- * @returns Pnumber}
+ * @returns {number}
  */
 export const dec = sub(1);
 

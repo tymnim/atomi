@@ -121,6 +121,10 @@ export class Scope {
 }
 
 export class ReactiveVar {
+  /*
+   * @template {any} T
+   * @param {T} value
+   */
   constructor(value) {
     this.value = value;
     this.deps = new Set();
@@ -128,6 +132,9 @@ export class ReactiveVar {
     this.set = this.set.bind(this);
   }
 
+  /**
+   * @returns {T}
+   */
   get() {
     if (Tracker.currentScope) {
       Tracker.currentScope.depend(this);
@@ -136,6 +143,10 @@ export class ReactiveVar {
   }
 
   // NOTE: #set can be optionaly awaited for all dependencies to execute.
+  /**
+   * @param {T}
+   * @returns Promise
+   */
   set(value) {
     this.value = value;
     const deps = [...this.deps].map(dep => dep.trigger(this));

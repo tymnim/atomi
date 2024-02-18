@@ -28,6 +28,11 @@ export function reactive(func, ignoreAsync = false) {
 
 /**
  * @param {ReactiveVar} reactiveVar
+ * @returns {[
+ *            () => any,
+ *            (newValue: any) => Promise,
+ *            (callback: (currentValue: any, none: NONE) => (any|NONE)) => (Promise|void)
+ *          ]}
  */
 export function reactiveState(reactiveVar) {
   return [
@@ -143,17 +148,16 @@ export function guard(func, predicate = eq) {
 }
 
 /**
+ * An atom is used to store some state.
  * @example
  * const [vairable, setVariable, setVariableFn] = atom(initialValue);
- *
- * @param {any} [value]
- * @returns {function[]}
+ * const state = new atom(initialValue);
+ * @template T
+ * @param {T} [variable]
  */
-export function atom(value) {
-  const reactiveVar = new ReactiveVar(value);
-  return reactiveState(reactiveVar);
+export function atom(variable) {
+  const reactiveVar = new ReactiveVar(variable);
+  return new.target === undefined ? reactiveState(reactiveVar) : reactiveVar;
 }
-
-export const atomize = reactiveState;
 
 export default reactive;

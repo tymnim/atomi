@@ -40,7 +40,7 @@ const scopeTests = {
 };
 
 const hooksTests = {
-  "reactive": {
+  "atom": {
     "#get": () => {
       const [state] = atom(5);
 
@@ -115,7 +115,7 @@ const hooksTests = {
       assert.equal(depState(), state());
     }
   },
-  "reactiveFunction": {
+  "reactive": {
     "Making sure reactiveFunction executes exactly once": async () => {
       const [state, setState] = atom(false);
       let timesExecuted = 0;
