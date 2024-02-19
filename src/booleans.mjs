@@ -2,7 +2,7 @@
 
 /**
  * @param {any} value
- * @returns boolean
+ * @returns {boolean}
  */
 export function not(value) {
   return !value;
@@ -42,12 +42,12 @@ export function greater(value) {
 
 /**
  * @param {number} value
- * @returns boolean
+ * @returns {boolean}
  */
 export const negative = lesser(0);
 
 /**
  * @param {number} value
- * @returns boolean
+ * @returns {boolean}
  */
 export const positive = greater(0);

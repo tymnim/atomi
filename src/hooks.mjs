@@ -68,8 +68,8 @@ export function reactiveState(reactiveVar) {
      */
 
     /**
-     * A function. Is used to update a value and atom. Accepts a callback {setStateCallback}.
-     * The return value of such callback will be set as a new value of the atom and all dependent
+     * A function. Is used to update a value of an atom. Accepts a callback {setStateCallback}.
+     * The return value of such callback will be set as a new value of the atom. All dependent
      * scopes are triggered. If {NONE} is returned no new value is set and no scopes are triggered.
      *
      * @param {setStateCallback} func
@@ -85,7 +85,7 @@ export function reactiveState(reactiveVar) {
 }
 
 /**
- *  A function. Is use to execute functions without a scope so inner atoms are not registered
+ *  A function. Is used to execute functions without a scope so inner atoms are not registered
  *  as dependencies
  *
  * @param {function} func
@@ -109,8 +109,8 @@ function eq(a, b) {
 }
 
 /**
- * Is used to guard reactive function changes or atom changes. Eg is an atom is used to store
- * a boolean value when it's set to true multiple times you might not want to trigger
+ * Is used to guard reactive function changes or atom changes. Eg if an atom is used to store
+ * a boolean value, when it's set to true multiple times you might not want to trigger
  * its dependency.
  * @example
  * const [booleanValue, setBooleanValue] = atom(false);

@@ -18,7 +18,7 @@ export function filter(predicate) {
 
 /**
  * @param {...any} values
- * @return {function(any[])}: any[]
+ * @returns {function(any[])}: any[]
  */
 export function prepend(...values) {
   return current => [...values, ...current];
@@ -26,7 +26,7 @@ export function prepend(...values) {
 
 /**
  * @param {...any} values
- * @return {function(any[])}: any[]
+ * @returns {function(any[])}: any[]
  */
 export function append(...values) {
   return current => [...current, ...values];
@@ -71,7 +71,7 @@ export function sort(compareFn) {
 /**
  * @param {any} a
  * @param {any} b
- * @returns number
+ * @returns {number}
  */
 export function asc(a, b) {
   return a > b && 1 || (a < b && -1) || 0;
@@ -80,7 +80,7 @@ export function asc(a, b) {
 /**
  * @param {any} a
  * @param {any} b
- * @returns number
+ * @returns {number}
  */
 export function desc(a, b) {
   return a > b && -1 || (a < b && 1) || 0;
