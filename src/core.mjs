@@ -120,12 +120,16 @@ export class Scope {
 
 }
 
+/**
+ * @template T
+ * @returns {ReactiveVar<T>}
+ */
 export class ReactiveVar {
-  /*
-   * @template {any} T
+  /**
    * @param {T} value
    */
   constructor(value) {
+    // @type {T}
     this.value = value;
     this.deps = new Set();
     this.get = this.get.bind(this);
@@ -144,8 +148,8 @@ export class ReactiveVar {
 
   // NOTE: #set can be optionaly awaited for all dependencies to execute.
   /**
-   * @param {T}
-   * @returns Promise
+   * @param {T} value
+   * @returns {Promise}
    */
   set(value) {
     this.value = value;
