@@ -27,64 +27,6 @@ export function reactive(func, ignoreAsync = false) {
 }
 
 /**
- * @param {ReactiveVar} reactiveVar
- * @returns {[
- *            () => any,
- *            (newValue: any) => Promise,
- *            (callback: (currentValue: any, none: NONE) => (any|NONE)) => (Promise|void)
- *          ]}
- */
-export function reactiveState(reactiveVar) {
-  return [
-    /**
-     * A function. Is used to access a value of an atom. Registers current scope as a dependency if
-     * one exists. The scope is triggered when value of the atom changes.
-     *
-     * @prop {ReactiveVar} reactiveVar
-     * @returns {any}
-     */
-    Object.defineProperty(
-      function get() {
-        return reactiveVar.get();
-      },
-      "reactiveVar",
-      { writable: false, enumerable: false, value: reactiveVar }
-    ),
-    /**
-     * A function. Is used to update the value of an atom and triggers all scopes that
-     * are registered as dependencies.
-     *
-     * @param {any} value - new value to be set to an atom.
-     * @returns <Promise>
-     */
-    function set(value) {
-      return reactiveVar.set(value);
-    },
-    /**
-     * @callback setStateCallback
-     * @param {any}  currentValue
-     * @param {NONE} none
-     * @returns {any|NONE}
-     */
-
-    /**
-     * A function. Is used to update a value of an atom. Accepts a callback {setStateCallback}.
-     * The return value of such callback will be set as a new value of the atom. All dependent
-     * scopes are triggered. If {NONE} is returned no new value is set and no scopes are triggered.
-     *
-     * @param {setStateCallback} func
-     * @returns {Promise|void}
-     */
-    function fset(func) {
-      const result = func(reactiveVar.value, NONE);
-      if (result !== NONE) {
-        return reactiveVar.set(result);
-      }
-    }
-  ];
-}
-
-/**
  *  A function. Is used to execute functions without a scope so inner atoms are not registered
  *  as dependencies
  *
@@ -151,13 +93,57 @@ export function guard(func, predicate = eq) {
  * An atom is used to store some state.
  * @example
  * const [vairable, setVariable, setVariableFn] = atom(initialValue);
- * const state = new atom(initialValue);
- * @template T
- * @param {T} [variable]
+ *
+ * @template {any|undefined} T
+ *
+ * @param {T} variable
+ * @returns {[get, set, fset]}
  */
 export function atom(variable) {
+  /**
+   * @typedef {(function(): T) & {reactiveVar: ReactiveVar<T>}} get
+   * @typedef {function(T): Promise} set
+   * @typedef {function(function(T, NONE): (T|NONE)): Promise} fset
+   */
   const reactiveVar = new ReactiveVar(variable);
-  return new.target === undefined ? reactiveState(reactiveVar) : reactiveVar;
+
+  const reactive = { reactiveVar };
+
+  /**
+   * A function. Is used to access a value of an atom. Registers current scope as a dependency if
+   * one exists. The scope is triggered when value of the atom changes.
+   *
+   * @type {get}
+   */
+  const get = Object.assign(function get() {
+    return reactiveVar.get();
+  }, reactive);
+
+  /**
+   * A function. Is used to update the value of an atom and triggers all scopes that
+   * are registered as dependencies.
+   *
+   * @type {set}
+   */
+  function set(value) {
+    return reactiveVar.set(value);
+  }
+
+  /**
+   * A function. Is used to update a value of an atom. Accepts a callback {setStateCallback}.
+   * The return value of such callback will be set as a new value of the atom. All dependent
+   * scopes are triggered. If {NONE} is returned no new value is set and no scopes are triggered.
+   *
+   * @type {fset}
+   */
+  function fset(func) {
+    const result = func(reactiveVar.value, NONE);
+    if (result !== NONE) {
+      return reactiveVar.set(result);
+    }
+    return Promise.resolve();
+  }
+  return [get, set, fset];
 }
 
 export default reactive;
