@@ -1,10 +1,12 @@
 {
   "name": "atomi",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "description": "JS Reactivity Framework",
   "main": "index.mjs",
   "scripts": {
-    "test": "node_modules/unit-tester/test.mjs test"
+    "test": "node_modules/unit-tester/test.mjs test",
+    "test-full": "node_modules/eslint/bin/eslint.js **/*.mjs && node_modules/unit-tester/test.mjs test",
+    "eslint": "node_modules/eslint/bin/eslint.js **/*.mjs"
   },
   "repository": {
     "type": "git",
@@ -20,6 +22,8 @@
   },
   "homepage": "https://github.com/tymnim/atomi#readme",
   "devDependencies": {
-    "unit-tester": "^1.0.4"
+    "@stylistic/eslint-plugin": "1.6.0",
+    "eslint": "8.56.0",
+    "unit-tester": "2.0.0"
   }
 }
