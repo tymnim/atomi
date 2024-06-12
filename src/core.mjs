@@ -47,6 +47,13 @@ export class Scope {
 
   _currentGuard = 0;
 
+  // NOTE: I think there might a need to store some data on the scope
+  //       though it might not be the nicest code.
+  /**
+   * @type {Object.<string, any>}
+   */
+  space = {};
+
   constructor(callback) {
     this.callback = callback;
 
@@ -54,10 +61,6 @@ export class Scope {
     this.timesRun = 0;
     this.deps = new Set();
     this.triggeredBy = new Set();
-
-    // NOTE: I think there might a need to store some data on the scope
-    //       though it might not be the nicest code.
-    this.space = {};
   }
 
   get firstRun() {
