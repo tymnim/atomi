@@ -94,14 +94,14 @@ export function guard(func, predicate = eq) {
  * @example
  * const [vairable, setVariable, setVariableFn] = atom(initialValue);
  *
- * @template {any|undefined} T
+ * @template {any} T
  *
  * @param {T} variable
  * @returns {[get, set, fset]}
  */
 export function atom(variable) {
   /**
-   * @typedef {(function(): T) & {reactiveVar: ReactiveVar<T>}} get
+   * @typedef {(function(): T) & {reactiveVar: ReactiveVar}} get
    * @typedef {function(T): Promise} set
    * @typedef {function(function(T, NONE): (T|NONE)): Promise} fset
    */

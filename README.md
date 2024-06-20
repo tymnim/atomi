@@ -706,7 +706,7 @@ setArray(append(0)) // add 0 at the end. Not array is [1,3,2,0]
 - Accept `Number`, ...`Any`
 - Return `(Array) => Array`
 
-> Creates a inserter
+> Creates an inserter
 
 ```js
 import { insert } from "atomi"
@@ -789,3 +789,60 @@ const [array,, setArray] = atom([11,1,3,2])
 
 setArray(sort(desc)) // using default js sorter. Now array stores [11, 3, 2, 1]
 ```
+
+### Optimizing
+
+#### omap
+
+- [src/arrayOptimizations.mjs#48](https://github.com/tymnim/atomi/blob/master/src/arrayOptimizations.mjs#48)
+
+> Creates a function reacting to changes in an atom containing an array keeping track of previous changes,
+calling a map callback only when the element mutates.
+
+```js
+import { omap } from "atomi"
+```
+
+```js
+const [array,, setArray] = atom([11, 1, 2, 3])
+
+const result = omap(array, x => x + 1)
+console.log(result()) // [12, 2, 3, 4]
+
+await setArray(arr => { arr[0] = 0; return arr; })
+// NOTE: map fn `x => x + 1` was called only once with 0;
+console.log(result()); // [1, 2, 3, 4]
+
+await setArray(arr => { arr[2] = 3; arr[3] = 2; return arr; })
+// NOTE: map fn `x => x + 1` was not called at all because elements just swapped places,
+//       but result has been updated
+console.log(result()); // [1, 2, 4, 3]
+```
+
+
+#### omapEnumerated
+
+- [src/arrayOptimizations.mjs#14](https://github.com/tymnim/atomi/blob/master/src/arrayOptimizations.mjs#14)
+
+> Creates a function reacting to changes in an atom containing an array keeping track of previous changes,
+calling a map callback only when the element mutates or changes its potisition in the array.
+
+```js
+import { omapEnumerated } from "atomi"
+```
+
+```js
+const [array,, setArray] = atom([0, 1, 2, 3])
+
+const result = omapEnumerated(array, (x, index) => x + index)
+console.log(result()) // [0, 2, 4, 6]
+
+await setArray(arr => { arr[3] = 4; return arr; })
+// NOTE: map fn `x => x + 1` was called only once with 4;
+console.log(result()); // [0, 2, 4, 7]
+
+await setArray(arr => { arr[2] = 3; arr[3] = 2; return arr; })
+// NOTE: map fn `x => x + 1` will be called twice for 3 and 2 with respective indexes
+console.log(result()); // [0, 2, 5, 5]
+```
+
