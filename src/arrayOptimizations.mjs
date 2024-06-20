@@ -4,8 +4,8 @@ import { atom, reactive } from "./hooks.mjs";
  * Creates a function reacting to changes in `arrayAtom` keeping track of previous changes, calling
  * `fn` callback only when the element mutates or its oposition in the array changes.
  *
- * @template {any} Data
- * @template {any} Result
+ * @template Data
+ * @template Result
  *
  * @param {function():Data[]}                       arrayAtom
  * @param {function(Data, number, Data[]):Result}   fn
