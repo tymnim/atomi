@@ -19,6 +19,7 @@ export function omapEnumerated(arrayAtom, fn) {
   reactive(() => {
     const array = arrayAtom();
     let changed = false;
+    const oldCacheLength = dataCache.length;
     dataCache = array.map((data, index) => {
       if (dataCache[index]?.data === data && dataCache[index].index === index) {
         return dataCache[index];
@@ -28,7 +29,10 @@ export function omapEnumerated(arrayAtom, fn) {
     });
 
     if (changed) {
-      setContent(dataCache.map(d => d.result));
+      return setContent(dataCache.map(d => d.result));
+    }
+    else if (oldCacheLength !== dataCache.length) {
+      return setContent(dataCache.map(d => d.result));
     }
   });
   return content;
@@ -53,6 +57,7 @@ export function omap(arrayAtom, fn) {
   reactive(() => {
     const array = arrayAtom();
     let changed = false;
+    const oldCacheLength = dataCache.length;
     dataCache = array.map((data, index) => {
       if (dataCache[index]?.data === data) {
         return dataCache[index];
@@ -66,7 +71,10 @@ export function omap(arrayAtom, fn) {
     });
 
     if (changed) {
-      setContent(dataCache.map(d => d.result));
+      return setContent(dataCache.map(d => d.result));
+    }
+    else if (oldCacheLength !== dataCache.length) {
+      return setContent(dataCache.map(d => d.result));
     }
   });
   return content;

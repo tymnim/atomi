@@ -70,6 +70,28 @@ export default {
       assert.deepEqual(iterations, [
         [1, 2], [2, 3], [3, 4], [4, 5], [5, 6]
       ]);
+    },
+    "removing last elements": async () => {
+      const [arr, setArr] = atom([1, 2, 3, 4, 5]);
+      const iterations = [];
+      const iterate = fn => (x, arr) => {
+        const res = fn(x, arr);
+        iterations.push([x, res]);
+
+        return res;
+      };
+      const result = omap(arr, iterate(x => x + 1));
+
+      assert.deepEqual(result(), [2, 3, 4, 5, 6]);
+      assert.deepEqual(iterations, [
+        [1, 2], [2, 3], [3, 4], [4, 5], [5, 6]
+      ]);
+
+      await setArr([1, 2, 3]);
+      assert.deepEqual(result(), [2, 3, 4]);
+      assert.deepEqual(iterations, [
+        [1, 2], [2, 3], [3, 4], [4, 5], [5, 6]
+      ]);
     }
   },
   "omapEnumerated": {
@@ -140,6 +162,28 @@ export default {
       assert.deepEqual(iterations, [
         [1, 2], [2, 3], [3, 4], [4, 5], [5, 6],
         [3, 4], [1, 2], [9, 10]
+      ]);
+    },
+    "removing last elements": async () => {
+      const [arr, setArr] = atom([1, 2, 3, 4, 5]);
+      const iterations = [];
+      const iterate = fn => (x, arr) => {
+        const res = fn(x, arr);
+        iterations.push([x, res]);
+
+        return res;
+      };
+      const result = omapEnumerated(arr, iterate(x => x + 1));
+
+      assert.deepEqual(result(), [2, 3, 4, 5, 6]);
+      assert.deepEqual(iterations, [
+        [1, 2], [2, 3], [3, 4], [4, 5], [5, 6]
+      ]);
+
+      await setArr([1, 2, 3]);
+      assert.deepEqual(result(), [2, 3, 4]);
+      assert.deepEqual(iterations, [
+        [1, 2], [2, 3], [3, 4], [4, 5], [5, 6]
       ]);
     }
   }
