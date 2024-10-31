@@ -91,8 +91,12 @@ export function guard(func, predicate = eq) {
 
 /**
  * @template T
- * @callback Get
+ * @callback RawGet
  * @returns {T}
+ */
+/**
+ * @template T
+ * @typedef {RawGet<T> & {reactiveVar: ReactiveVar}} Get
  */
 
 /**
@@ -133,7 +137,7 @@ export function atom(variable) {
    * A function. Is used to access a value of an atom. Registers current scope as a dependency if
    * one exists. The scope is triggered when value of the atom changes.
    *
-   * @type {(Get<T>) & {reactiveVar: ReactiveVar}}
+   * @type {Get<T>}
    */
   const get = Object.assign(function get() {
     return reactiveVar.get();
