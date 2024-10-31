@@ -1,5 +1,10 @@
 // @ts-check
 
+/**
+ * @template T
+ * @typedef {import('./src/hooks.mjs').Atom<T>} Atom<T>
+ */
+
 export { reactive, atom, nonreactive, guard } from "./src/hooks.mjs";
 export { not, id, is, lesser, greater, negative, positive } from "./src/booleans.mjs";
 export {

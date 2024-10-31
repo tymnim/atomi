@@ -90,6 +90,35 @@ export function guard(func, predicate = eq) {
 }
 
 /**
+ * @template T
+ * @callback RawGet
+ * @returns {T}
+ */
+/**
+ * @template T
+ * @typedef {RawGet<T> & {reactiveVar: ReactiveVar}} Get
+ */
+
+/**
+ * @template T
+ * @callback Set
+ * @param {T} value
+ * @returns {Promise}
+ */
+
+/**
+ * @template T
+ * @callback FSet
+ * @param {function(T, NONE): (T|NONE)} func
+ * @returns {Promise}
+ */
+
+/**
+ * @template T
+ * @typedef {[Get<T>, Set<T>, FSet<T>]} Atom
+ */
+
+/**
  * An atom is used to store some state.
  * @example
  * const [vairable, setVariable, setVariableFn] = atom(initialValue);
@@ -97,14 +126,9 @@ export function guard(func, predicate = eq) {
  * @template {any} T
  *
  * @param {T} variable
- * @returns {[get, set, fset]}
+ * @returns {Atom<T>}
  */
 export function atom(variable) {
-  /**
-   * @typedef {(function(): T) & {reactiveVar: ReactiveVar}} get
-   * @typedef {function(T): Promise} set
-   * @typedef {function(function(T, NONE): (T|NONE)): Promise} fset
-   */
   const reactiveVar = new ReactiveVar(variable);
 
   const reactive = { reactiveVar };
@@ -113,7 +137,7 @@ export function atom(variable) {
    * A function. Is used to access a value of an atom. Registers current scope as a dependency if
    * one exists. The scope is triggered when value of the atom changes.
    *
-   * @type {get}
+   * @type {Get<T>}
    */
   const get = Object.assign(function get() {
     return reactiveVar.get();
@@ -123,7 +147,7 @@ export function atom(variable) {
    * A function. Is used to update the value of an atom and triggers all scopes that
    * are registered as dependencies.
    *
-   * @type {set}
+   * @type {Set<T>}
    */
   function set(value) {
     return reactiveVar.set(value);
@@ -134,7 +158,7 @@ export function atom(variable) {
    * The return value of such callback will be set as a new value of the atom. All dependent
    * scopes are triggered. If {NONE} is returned no new value is set and no scopes are triggered.
    *
-   * @type {fset}
+   * @type {FSet<T>}
    */
   function fset(func) {
     const result = func(reactiveVar.value, NONE);

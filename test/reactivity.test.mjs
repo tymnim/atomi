@@ -115,7 +115,7 @@ const hooksTests = {
       assert.equal(depState(), state());
     }
   },
-  "reactive": {
+  "#reactive": {
     "Making sure reactiveFunction executes exactly once": async () => {
       const [state, setState] = atom(false);
       let timesExecuted = 0;
@@ -145,6 +145,26 @@ const hooksTests = {
       setState2(true);
       await setState1(true);
       assert.equal(timesExecuted, 3);
+    },
+    "Chaining #reactive": async () => {
+      const [A, setA] = atom(0);
+      const [B, setB] = atom(0);
+      const [C, setC] = atom(0);
+
+      reactive(() => {
+        const a = A();
+        return wait(200).then(() => setB(a));
+      });
+      reactive(() => {
+        const b = B();
+        return wait(200).then(() => setC(b));
+      });
+
+      assert(A() === B() && B() === C(), "initial check");
+
+      await setA(1);
+
+      assert(A() === B() && B() === C(), "Chained reactive await failed");
     }
   },
   "#nonreactive": async () => {
