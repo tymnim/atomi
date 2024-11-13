@@ -80,3 +80,19 @@ export function omap(arrayAtom, fn) {
   return content;
 }
 
+/**
+ * Creates a function reacting to changes in `arrayAtom`, filtering them based on the `predicate`.
+ * Returns atomic getter of filtered elements
+ *
+ * @template Data
+ *
+ * @param {function():Data[]}                       arrayAtom
+ * @param {function(Data, number, Data[]):boolean}  predicate
+ * @returns {function():Data[]} - atomic getter containing resulting array
+ */
+export function ofilter(arrayAtom, predicate) {
+  return () => {
+    return arrayAtom().filter(predicate);
+  };
+}
+

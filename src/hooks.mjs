@@ -66,6 +66,9 @@ function eq(a, b) {
  */
 export function guard(func, predicate = eq) {
   const currentScope = Tracker.currentScope;
+  if (!currentScope) {
+    return func();
+  }
   const index = currentScope._currentGuard;
   if (currentScope.firstRun) {
     currentScope._guards[index] = new Scope(self => {
