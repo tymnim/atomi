@@ -1,14 +1,16 @@
 {
   "name": "atomi",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "JS Reactivity Framework",
-  "main": "index.mjs",
+  "main": "dist/bundle.mjs",
   "types": "types/index.d.mts",
   "scripts": {
-    "prepare": "npm run test-full && npm run types",
+    "dev": "rollup -c rollup.config.mjs -w",
+    "build": "rollup -c rollup.config.mjs",
+    "prepare": "npm run test-full && npm run types && npm run build",
     "test": "node_modules/unit-tester/test.mjs test",
-    "test-full": "node_modules/eslint/bin/eslint.js **/*.mjs && node_modules/unit-tester/test.mjs test",
-    "eslint": "node_modules/eslint/bin/eslint.js **/*.mjs",
+    "test-full": "npm run eslint && npm run test",
+    "eslint": "node_modules/eslint/bin/eslint.js **/*.mjs --ignore-pattern 'dist/*'",
     "types": "node_modules/typescript/bin/tsc --allowJs -d --emitDeclarationOnly --lib es2023,dom --target es6 index.mjs --outDir types"
   },
   "repository": {
@@ -25,8 +27,10 @@
   },
   "homepage": "https://github.com/tymnim/atomi#readme",
   "devDependencies": {
+    "@rollup/plugin-terser": "0.4.4",
     "@stylistic/eslint-plugin": "1.6.0",
     "eslint": "8.56.0",
+    "rollup": "4.26.0",
     "typescript": "5.3.3",
     "unit-tester": "2.0.1"
   }
